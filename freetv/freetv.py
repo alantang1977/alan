@@ -437,7 +437,6 @@ def save_freetv_files(all_channels, template, epg_url, output_dir="freetv"):
     m3u_file = os.path.join(output_dir, "freetv.m3u")
     m3u_lines = [
         f'#EXTM3U x-tvg-url="{epg_url}"'
-        #f'x-tvg-url="{epg_url}"'
     ]
     
     # 按分类和模板顺序输出
@@ -454,8 +453,11 @@ def save_freetv_files(all_channels, template, epg_url, output_dir="freetv"):
         if not available_channels_in_category:
             continue
         
+        # 修正：去除分类名中可能存在的逗号，确保只保留一个逗号
+        safe_category = category.replace(',', '')
+        
         # 在txt文件中添加分类标题
-        txt_lines.append(f"{category},#genre#")
+        txt_lines.append(f"{safe_category},#genre#")
         
         # 输出该分类下的所有频道
         for main_channel in available_channels_in_category:
@@ -473,7 +475,7 @@ def save_freetv_files(all_channels, template, epg_url, output_dir="freetv"):
                 safe_main = main_channel.replace(',', '')
                 safe_url = url.replace(',', '')
                 m3u_lines.extend([
-                    f'#EXTINF:-1 tvg-name="{safe_main}" tvg-logo="{logo_url}" group-title="{category}", {safe_main}',
+                    f'#EXTINF:-1 tvg-name="{safe_main}" tvg-logo="{logo_url}" group-title="{safe_category}", {safe_main}',
                     safe_url
                 ])
     
@@ -566,9 +568,7 @@ def main():
     
     # 定义多个源URLhttps://gh-proxy.com/
     source_urls = [
-        #"https://raw.githubusercontent.com/adminouyang/jy/refs/heads/main/Hotel/IPTV.txt",
         "https://freetv.fun/test_channels_original_new.txt"
-        # 可以继续添加更多源URL
     ]
     
     all_channels = []
