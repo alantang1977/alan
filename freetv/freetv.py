@@ -463,14 +463,18 @@ def save_freetv_files(all_channels, template, epg_url, output_dir="freetv"):
             
             # txt格式：每个源一行
             for url, speed in sources:
-                txt_lines.append(f"{main_channel},{url}")
+                # 修正：去除频道名和URL中可能存在的逗号，避免输出多余逗号
+                txt_lines.append(f"{main_channel.replace(',', '')},{url.replace(',', '')}")
             
             # m3u格式：每个源一个条目
             logo_url = template.get_logo_url(main_channel)
             for url, speed in sources:
+                # 修正：去除频道名和URL中的逗号
+                safe_main = main_channel.replace(',', '')
+                safe_url = url.replace(',', '')
                 m3u_lines.extend([
-                    f'#EXTINF:-1 tvg-name="{main_channel}" tvg-logo="{logo_url}" group-title="{category}", {main_channel}',
-                    url
+                    f'#EXTINF:-1 tvg-name="{safe_main}" tvg-logo="{logo_url}" group-title="{category}", {safe_main}',
+                    safe_url
                 ])
     
     # 保存txt文件
